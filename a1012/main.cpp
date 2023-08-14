@@ -1,22 +1,15 @@
 /* 
 Exercise 1:
-
     Create a log, a vector of strings is a decent choice for the storage.
     Knowing it will be accessed from multiple threads, think a bit how you want 
     to handle it.
-
     Create a function to read user input until user writes "quit" (or some 
     other way for the user to gracefully exit) Add the read input to the log.
-
     Create a function to add a message to the log every second.  (e.g. "one 
     second passed" or "program has been running for n seconds")
-
     Make the program print the log if user input matches some command e.g. "log"
-
     Launch both functions in separate threads, try it out.
-
 Exercise 2:
-
     Implement functionality so the second loop exits gracefully if the user 
     decided to exit.
 */
@@ -30,7 +23,7 @@ Exercise 2:
 
 using Logs = std::vector<std::string>;
 static std::mutex lock_logs {};
-static bool keep_logging {true};
+static std::atomic<bool> keep_logging {true};
 
 void write_to_log(Logs& logs, std::string input) {
     std::lock_guard<std::mutex> lock {lock_logs};
@@ -60,7 +53,7 @@ void listen_and_write_input(Logs& log) {
 
 void add_message_to_log(Logs& log) {
     std::string msg {"One second passed"};
-    
+
     while (keep_logging) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
         write_to_log(log, msg);
