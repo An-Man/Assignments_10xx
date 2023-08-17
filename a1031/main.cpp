@@ -15,8 +15,8 @@ struct Allocator
 
     pointer allocate(size_type n) {
 
-        T* ptr = new (block) // ??? ;
-        
+        T* ptr = new (block) T();
+        return ptr;
     }
 
     void deallocate(pointer p) noexcept {
@@ -24,14 +24,15 @@ struct Allocator
     }
 
     private:
-        static uint8_t block [Mem_ByteSize];
-
+        static inline uint8_t block [Mem_ByteSize];
 };
 
 int main() {
 
 Allocator<uint8_t, 3> a;
 
-uint8_t* ptr = a.allocate(3);
+uint8_t* ptr = a.allocate(3); // works
+
+std::vector<int, Allocator<int, 3>> x; // rebind problem or smt, won't compile
     
 }
